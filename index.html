@@ -1,16 +1,48 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Image Size Checker</title>
+  <style type="text/css">
+    #file_list {
+      overflow: scroll;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Choose a folder See Images</h1>
+  <div id="file_list">
+    File List
+  </div>
+  <input type="file" id="directoryVal" webkitdirectory>
+  <script type="text/javascript">
+    document.getElementById("directoryVal").addEventListener("change", function (e) {
+      var sizeOf = require('image-size');
+      path = document.getElementById("directoryVal").files[0].path;
+      var files_paths = getDims(document.getElementById("directoryVal").files[0].path).then(function (resolve,
+        reject) {
+
+        var return_html = "<table>";
+        console.log(document.getElementById("directoryVal").files[0].path);
+        for (i = 0; i < resolve.filenames.length; i++) {
+
+          dims = sizeOf(resolve.path + "/" + resolve.filenames[i]);
+          return_html = return_html + "<tr><td>" +
+            resolve.filenames[i] + "</td>" +
+            "<td>" + dims.width + "W x " + dims.height + "H </td></tr>";
+        }
+        return_html = return_html + "</table>"
+        document.getElementById("file_list").innerHTML = return_html;
+
+      });
+
+    })
+  </script>
+
+  <!-- You can also require other files to run in this process -->
+  <script src="./renderer.js"></script>
+</body>
+
 </html>
