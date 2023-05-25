@@ -8,17 +8,28 @@
     #file_list {
       overflow: scroll;
     }
+
+    table {
+      border: solid 1px;
+    }
+
+    td {
+      border: solid 1px;
+    }
   </style>
 </head>
 
 <body>
   <h1>Choose a folder See Images</h1>
-  <div id="file_list">
-    File List
-  </div>
   <input type="file" id="directoryVal" webkitdirectory>
+  <hr />
+  <div id="file_list">
+    --
+  </div>
+
   <script type="text/javascript">
     document.getElementById("directoryVal").addEventListener("change", function (e) {
+      document.getElementById("file_list").innerHTML = "Working!";
       var sizeOf = require('image-size');
       path = document.getElementById("directoryVal").files[0].path;
       var files_paths = getDims(document.getElementById("directoryVal").files[0].path).then(function (resolve,
@@ -27,13 +38,17 @@
         var return_html = "<table>";
         console.log(document.getElementById("directoryVal").files[0].path);
         for (i = 0; i < resolve.filenames.length; i++) {
-
-          dims = sizeOf(resolve.path + "/" + resolve.filenames[i]);
-          return_html = return_html + "<tr><td>" +
-            resolve.filenames[i] + "</td>" +
-            "<td>" + dims.width + "W x " + dims.height + "H </td></tr>";
+          if (resolve.filenames[i].match(/.*\.(jpg|png|gif|psd)/)) {
+            dims = sizeOf(resolve.path + "/" + resolve.filenames[i]);
+            return_html = return_html + "<tr><td>" +
+              resolve.filenames[i] + "</td>" +
+              "<td>" + dims.width + "W x " + dims.height + "H </td></tr>";
+          } else {
+            return_html = return_html + "<tr><td>" +
+              resolve.filenames[i] + "</td><td>Not An Image</td></tr>";
+          }
         }
-        return_html = return_html + "</table>"
+        return_html = return_html + "</table> Done!"
         document.getElementById("file_list").innerHTML = return_html;
 
       });
